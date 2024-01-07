@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the number</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 40px;
+            margin-right: 5px;
+        }
+
+        #chances {
+            color: #3498db;
+        }
+
+        .modal-content {
+            background-color: #f2f2f2;
+        }
+
+        .modal-footer {
+            justify-content: center;
+        }
+
+        .modal-body {
+            color: #3498db;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-3"><h3 id="chances">10 Chances left</h3></div>
+        <div class="col-12"><h1>Guess the number</h1></div>
+    </div>
+    <div>
+        You have to give 4 unique numbers. If you correctly choose the expected number and in the same order, you will
+        get
+        10 marks for each number. If you chose the number correctly but it is in the wrong position, you will get 2 marks
+        for each number. If all numbers are the same as the expected number and in the same position, you are the winner.
+    </div>
+    <br>
+    <input type="number" id="first">
+    <input type="number" id="second">
+    <input type="number" id="third">
+    <input type="number" id="four">
+    <br><br>
+    <button type="button" class="btn btn-primary" onclick="guess()">Submit</button>
+    <h3 id="result"></h3>
+    <div id="rank">
+        <h5>Your score: 0</h5>
+    </div>
+    <div class="modal" id="gameOverModal" tabindex="-1" role="dialog" aria-labelledby="gameOverModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body" id="modalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="restartGame()">Restart Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var n1 = document.getElementById("first")
+        var n2 = document.getElementById("second")
+        var n3 = document.getElementById("third")
+        var n4 = document.getElementById("four")
+        var rank = document.getElementById("rank")
+        var obs = [n1, n2, n3, n4]
+        var count = 10
+        var expected_num = generateUniqueRandomNumbers(4, 1, 9);
+
+        function generateUniqueRandomNumbers(count, min, max) {
+            var numbers = [];
+            while (numbers.length < count) {
+                var randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+                if (!numbers.includes(randomNum)) {
+                    numbers.push(randomNum);
+                }
+            }
+            return numbers;
+        }
+        var score = 0
+        function guess() {
+            count--;
+            score = 0
+            for (var i = 0; i < 4; i++) {
+                for (var j = 0; j < 4; j++) {
+                    if (parseInt(obs[i].value) == expected_num[j]) {
+                        if (i == j) score += 10;
+                        else score += 2;
+                    }
+                }
+            }
+            document.getElementById("rank").innerHTML += "<b> Your score is " + score + " " + "</b> Your guess numbers are: " + obs[0].value + "" + obs[1].value + "" + obs[2].value + "" + obs[3].value + "<br>"
+            document.getElementById("chances").innerHTML = count + " Chances left";
+            var resultElement = document.getElementById("result");
+            if (score == 40) {
+                resultElement.innerHTML = "Correct";
+                resultElement.className = "Correct";
+                resultElement.style.color = "green";
+                showModal("You guessed all the numbers correctly. Congratulations!!");
+            } else if (count == 0) {
+                resultElement.innerHTML = "Wrong";
+                resultElement.className = "Wrong";
+                resultElement.style.color = "red";
+                showModal("Chances are over");
+            } else {
+                resultElement.innerHTML = "Wrong";
+                resultElement.className = "Wrong";
+                resultElement.style.color = "red";
+            }
+        }
+
+        function showModal(message) {
+            var modalBody = document.getElementById("modalBody");
+            modalBody.innerHTML = "<p>" + message + "</p><p>Your final score is: " + score + "</p>";
+            $('#gameOverModal').modal('show');
+        }
+
+
+        function restartGame() {
+            location.reload()
+        }
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
